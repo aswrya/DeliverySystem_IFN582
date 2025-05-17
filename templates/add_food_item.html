@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Add Food Item{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">Add Food Item</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" enctype="multipart/form-data" class="border p-4 shadow rounded">
+        <div class="mb-3">
+            <label for="shop_id" class="form-label">Select Shop</label>
+            <select class="form-select" id="shop_id" name="shop_id" required>
+                <option value="">-- Choose Shop --</option>
+                {% for shop in shops %}
+                    <option value="{{ shop[0] }}">{{ shop[1] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="name" class="form-label">Food or Drink Item Name</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="e.g., Chicken Burger" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="price" class="form-label">Price ($)</label>
+            <input type="number" class="form-control" id="price" name="price" step="0.01" min="0" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="image" class="form-label">Upload Image</label>
+            <input class="form-control" type="file" id="image" name="image" accept="image/*" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Add Food Item</button>
+    </form>
+</div>
+{% endblock %}

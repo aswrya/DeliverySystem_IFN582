@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Order History</h2>
+
+    {% if order_details %}
+        {% for entry in order_details %}
+            <div class="card mb-3">
+                <div class="card-header">
+                    <strong>Order ID:</strong> {{ entry['order_id'] }} |
+                    <strong>Date:</strong> {{ entry.order[3].strftime("%Y-%m-%d %H:%M:%S") }}
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for name, price, quantity in entry['items'] %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ name }} (x{{ quantity }})
+                            <span>${{ "%.2f"|format(price * quantity) }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No order history found.</p>
+    {% endif %}
+</div>
+{% endblock %}

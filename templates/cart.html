@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Cart{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="mb-4">Your Cart</h2>
+    {% if cart %}
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Item</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in cart %}
+            <tr>
+                <td><img src="{{ url_for('static', filename=item.image_url) }}" width="60"></td>
+                <td>{{ item.name }}</td>
+                <td>${{ "%.2f"|format(item.price) }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>${{ "%.2f"|format(item.subtotal) }}</td>
+                <td>
+                    <!-- Add a button to remove a specific item from the cart -->
+                    <form action="{{ url_for('remove_item', item_id=item.id) }}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="4" class="text-end"><strong>Total:</strong></td>
+                <td><strong>${{ "%.2f"|format(total) }}</strong></td>
+            </tr>
+
+        </tbody>
+      </table>
+      <h4 class="text-end">Grand Total: ${{ "%.2f"|format(total) }}</h4>
+            <!-- Clear All Button -->
+    <form action="{{ url_for('clear_cart') }}" method="POST">
+        <button type="submit" class="btn btn-success w-100 mt-3">Clear All Items</button>
+    </form>
+
+      <form method="POST" action="{{ url_for('checkout') }}">
+        <h3 class="mt-4">Checkout Information</h3>
+        
+        <div class="mb-3">
+            <label for="name" class="form-label">Full Name</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+    
+        <div class="mb-3">
+            <label for="address" class="form-label">Delivery Address</label>
+            <textarea class="form-control" id="address" name="address" required></textarea>
+        </div>
+    
+        <div class="mb-3">
+            <label for="contact" class="form-label">Contact Number</label>
+            <input type="text" class="form-control" id="contact" name="contact" required>
+        </div>
+    
+        <div class="mb-3">
+            <label for="delivery_method" class="form-label">Delivery Method</label>
+            <select class="form-select" id="delivery_method" name="delivery_method" required>
+                <option value="">Select</option>
+                <option value="click_collect">Click & Collect</option>
+                <option value="express">Express Delivery</option>
+                <option value="eco_friendly">Eco-Friendly Delivery</option>
+            </select>
+        </div>
+    
+        <button type="submit" class="btn btn-success w-100 mt-3">Place Order</button>
+    </form>
+    
+    {% else %}
+      <p class="no-data-message">Your cart is empty.</p>
+    {% endif %}
+</div>
+{% endblock %}

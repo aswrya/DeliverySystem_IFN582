@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Search Results{% endblock %}
+{% block content %}
+
+<div class="container my-4">
+  <h4 class="mb-4">Search Results for "{{ query }}"</h4>
+  {% if items %}
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+      {% for item in items %}
+        <div class="col">
+          <div class="card h-100 text-center shadow-sm">
+            <img src="{{ url_for('static', filename=item[3]) }}" class="card-img-top" alt="{{ item[1] }}">
+            <div class="card-body d-flex flex-column justify-content-between">
+              <div>
+                <h5 class="card-title">{{ item[1] }}</h5>
+                <p class="card-text">${{ item[2] }}</p>
+                <small class="text-muted">Shop: {{ item[4] }}</small>
+              </div>
+              <form method="POST" action="{{ url_for('add_to_cart') }}">
+                <input type="hidden" name="item_id" value="{{ item[0] }}">
+                <input type="hidden" name="item_name" value="{{ item[1] }}">
+                <input type="hidden" name="item_price" value="{{ item[2] }}">
+                <input type="hidden" name="item_image" value="{{ item[3] }}">
+                <button type="submit" class="btn btn-success mt-2">Add to Cart</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-muted">No items found.</p>
+  {% endif %}
+</div>
+
+{% endblock %}

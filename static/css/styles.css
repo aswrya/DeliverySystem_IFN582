@@ -1,0 +1,51 @@
+ .no-data-message {
+    height: 39vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    color: #555;
+ }
+
+.card-img-top{
+    max-width: 100%;
+    height: auto;
+    width: 150px;
+    margin-left: 70px;
+    /* Fixed width for images */
+}
+
+.shop-image {
+    height: 200px;
+    object-fit: cover;
+}
+
+@media (max-width: 576px) {
+    .footer-custom p {
+      font-size: 14px;
+      text-align: center;
+    }
+    .footer-custom .row {
+      text-align: center;
+    }
+  }
+
+.card-img-top {
+    height: 200px;            /* Adjust height as needed */
+    object-fit: cover;        /* Ensures image covers area nicely */
+    border-radius: 8px 8px 0 0;
+}
+
+@media (max-width: 576px) {
+    td, th {
+      font-size: 0.85rem;
+      word-wrap: break-word;
+      white-space: normal;
+    }
+  
+    .table td ul {
+      padding-left: 1rem; /* Indent nicely for mobile */
+    }
+  }
+
+  

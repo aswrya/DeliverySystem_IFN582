@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Add Vendor{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Add New Vendor</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('add_vendor') }}" method="POST" enctype="multipart/form-data" class="border p-4 shadow rounded">
+        <div class="mb-3">
+            <label for="shop_name" class="form-label">Shop Name</label>
+            <input type="text" class="form-control" id="shop_name" name="shop_name" required>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="location" class="form-label">Location</label>
+            <input type="text" class="form-control" id="location" name="location" required>
+        </div>
+        <div class="mb-3">
+            <label for="shop_image" class="form-label">Shop Image</label>
+            <input type="file" class="form-control" id="shop_image" name="shop_image" accept="image/*" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Vendor</button>
+    </form>
+</div>
+{% endblock %}

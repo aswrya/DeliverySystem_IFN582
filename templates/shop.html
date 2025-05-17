@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %} Shop {% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <h2 class="text-center mb-4">Our Shops</h2>
+    <div class="row">
+        {% if session['role'] == 'admin' %}
+            <a href="{{ url_for('add_vendor') }}" class="btn btn-success">Add Shop Vender</a>
+        {% endif %}
+        {% for shop in shops %}
+        <div class="col-md-4 mb-4 mt-4">
+            <div class="card shadow h-100">
+                <img src="{{ url_for('static', filename=shop[3]) }}" 
+                     class="card-img-top img-fluid shop-image" 
+                     alt="{{ shop[1] }}">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <h5 class="card-title">{{ shop[1] }}</h5>
+                    <p class="card-text">{{ shop[2] }}</p>
+                    <a href="{{ url_for('food', shop_id=shop[0]) }}" class="btn btn-success">View Menu</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

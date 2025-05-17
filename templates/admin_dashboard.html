@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<h3>Welcome Admin, {{ name }}!</h3>
+<p>This is the admin dashboard.</p>
+<a href="{{ url_for('view_all_orders') }}" class="btn btn-primary">View All Orders</a>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %} About Us {% endblock %}
+
+{% block content %}
+
+<!-- Contact Us Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-4">Contact Us</h2>
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-6">
+                <div class="bg-white p-4 rounded shadow-sm">
+                    <p><strong>Email:</strong> contact@brisbanefoods.com</p>
+                    <p><strong>Phone:</strong> +61 412 345 678</p>
+                    <p><strong>Address:</strong> 123 Food Lane, Brisbane QLD 4000, Australia</p>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form class="bg-white p-4 rounded shadow-sm">
+                    <div class="mb-3">
+                        <input type="text" class="form-control" placeholder="Your Name" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="email" class="form-control" placeholder="Your Email" required>
+                    </div>
+                    <div class="mb-3">
+                        <textarea class="form-control" rows="5" placeholder="Your Message" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container my-5">
+    <h2 class="text-center mb-4">About Our Delivery Platform</h2>
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <img src="{{ url_for('static', filename='images/delivery-guy.svg') }}" class="img-fluid rounded shadow" alt="About Us">
+        </div>
+        <div class="col-md-6 mt-4 mt-md-0">
+            <p class="lead">Welcome to our food and product delivery platform! We connect local shops and food vendors with customers across the city, making it easier than ever to get what you need, when you need it.</p>
+            <p>Our goal is to empower small businesses while offering customers a seamless and enjoyable ordering experience. Whether you’re craving your favorite meal or shopping for essentials, we’ve got you covered.</p>
+            <p>We believe in fast, reliable, and quality service, and we’re constantly improving our platform to serve you better.</p>
+            <ul>
+                <li>✔ Wide range of local shops and vendors</li>
+                <li>✔ Easy ordering and secure checkout</li>
+                <li>✔ Real-time cart and order tracking</li>
+                <li>✔ Admin features for vendor management</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

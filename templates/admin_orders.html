@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}All Orders{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="text-center mb-4">All User Orders</h2>
+
+  {% if all_order_details %}
+    <div class="table-responsive mx-auto">
+      <table class="table table-bordered table-hover text-center">
+        <thead class="table-dark">
+          <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Email</th>
+            <th>Date</th>
+            <th>Items</th>
+            <th>Total ($)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for entry in all_order_details %}
+            {% set order = entry['order'] %}
+            <tr>
+              <td>{{ order[0] }}</td>
+              <td>{{ order[1] }}</td>
+              <td>{{ order[2] }}</td>
+              <td>{{ order[4] }}</td>
+              <td class="text-start">
+                <ul class="list-unstyled mb-0">
+                  {% for item in entry['items'] %}
+                    <li>{{ item[0] }} — ${{ item[1] }} x {{ item[2] }}</li>
+                  {% endfor %}
+                </ul>
+              </td>
+              <td>${{ order[3] }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="text-center">No orders found.</p>
+  {% endif %}
+</div>
+{% endblock %}
