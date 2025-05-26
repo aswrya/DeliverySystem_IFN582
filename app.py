@@ -113,6 +113,50 @@ def signup():
         return redirect(url_for('login'))
     return render_template('signup.html')
 
+@app.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form['email']
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM users WHERE email=%s", (email,))
+        user = cur.fetchone()
+        cur.close()
+
+        if user:
+            session['reset_email'] = email  # store temporarily in session
+            flash('Email found. Please set your new password.', 'info')
+            return redirect(url_for('reset_password'))
+        else:
+            flash('Email not found.', 'danger')
+
+    return render_template('forgot_password.html')
+
+@app.route('/reset_password', methods=['GET', 'POST'])
+def reset_password():
+    if 'reset_email' not in session:
+        flash("Unauthorized access. Please use 'Forgot Password' first.", 'warning')
+        return redirect(url_for('forgot_password'))
+
+    if request.method == 'POST':
+        new_password = request.form['password']
+        repeat_password = request.form['repeat_password']
+
+        if new_password != repeat_password:
+            flash('Passwords do not match.', 'danger')
+            return redirect(url_for('reset_password'))
+
+        hashed_pw = generate_password_hash(new_password, method='pbkdf2:sha256')
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE users SET password=%s WHERE email=%s", (hashed_pw, session['reset_email']))
+        mysql.connection.commit()
+        cur.close()
+
+        session.pop('reset_email')
+        flash('Password reset successful. Please login.', 'success')
+        return redirect(url_for('login'))
+
+    return render_template('reset_password.html')
+
 @app.route('/dashboard')
 @login_required
 def dashboard():
@@ -131,6 +175,12 @@ def logout():
 
 @app.route('/food')
 def food():
+    user_role = session.get('role')
+
+    if user_role not in ['admin', 'user']:
+        flash("You are not authorized to access this page.", "danger")
+        return redirect(url_for('login'))
+    
     cur = mysql.connection.cursor()
     cur.execute("""
         SELECT food_items.id, food_items.name, food_items.price, food_items.image_url, shops.name AS shop_name
@@ -235,6 +285,11 @@ def search():
 
 @app.route('/shop')
 def shop():
+    user_role = session.get('role')
+
+    if user_role not in ['admin', 'user']:
+        flash("You are not authorized to access this page.", "danger")
+        return redirect(url_for('login'))
     # Fetch all shops from the database
     cur = mysql.connection.cursor()
     cur.execute("SELECT id, name, description, image_url FROM shops")
@@ -284,9 +339,40 @@ def add_vendor():
 def contact():
     return render_template('contact.html')
 
-@app.route('/about')
+@app.route('/about', methods=['GET', 'POST'])
 def about():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        message = request.form['message']
+
+        if name and email and message:
+            cursor = mysql.connection.cursor()
+            cursor.execute(
+                "INSERT INTO contact_messages (name, email, message) VALUES (%s, %s, %s)",
+                (name, email, message)
+            )
+            mysql.connection.commit()
+            cursor.close()
+            flash('Your message has been sent successfully!', 'success')
+            return redirect(url_for('about'))
+        else:
+            flash('All fields are required!', 'danger')
+
     return render_template('about.html')
+
+@app.route('/admin/messages', endpoint='admin_messages')
+@admin_required
+def view_contact_messages():
+    cur = mysql.connection.cursor()
+
+    # Fetch contact messages from the database
+    cur.execute("SELECT id, name, email, message, created_at FROM contact_messages ORDER BY created_at DESC")
+    messages = cur.fetchall()
+
+    cur.close()
+
+    return render_template('admin_messages.html', messages=messages)
 
 @app.route('/cart')
 @login_required

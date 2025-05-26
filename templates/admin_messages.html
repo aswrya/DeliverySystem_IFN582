@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin - Contact Messages{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Contact Messages</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Message</th>
+                <th>Received At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for msg in messages %}
+            <tr>
+                <td>{{ msg[0] }}</td>
+                <td>{{ msg[1] }}</td>
+                <td>{{ msg[2] }}</td>
+                <td>{{ msg[3] }}</td>
+                <td>{{ msg[4].strftime('%Y-%m-%d %H:%M:%S') }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" class="no-data-message">No messages found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

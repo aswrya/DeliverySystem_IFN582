@@ -43,7 +43,7 @@
       <h4 class="text-end">Grand Total: ${{ "%.2f"|format(total) }}</h4>
             <!-- Clear All Button -->
     <form action="{{ url_for('clear_cart') }}" method="POST">
-        <button type="submit" class="btn btn-success w-100 mt-3">Clear All Items</button>
+        <button type="submit" class="btn btn-danger w-100 mt-3">Clear All Items</button>
     </form>
 
       <form method="POST" action="{{ url_for('checkout') }}">
