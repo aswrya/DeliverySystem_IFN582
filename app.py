@@ -182,7 +182,7 @@ def logout():
     flash("Logged out", "info")
     return redirect(url_for('login'))
 
-# Rendering data 
+# Rendering data for food section
 @app.route('/food')
 def food():
     user_role = session.get('role')
@@ -216,6 +216,7 @@ def shop_details(shop_id):
 
     return render_template('shop_details.html', shop=shop, food_items=food_items)
 
+# logic for adding food items by the admin
 @app.route('/add_food_item', methods=['GET', 'POST'])
 @admin_required
 def add_food_item():
@@ -349,6 +350,7 @@ def add_vendor():
 def contact():
     return render_template('contact.html')
 
+# saving data from about page
 @app.route('/about', methods=['GET', 'POST'])
 def about():
     if request.method == 'POST':
@@ -371,6 +373,7 @@ def about():
 
     return render_template('about.html')
 
+# rendering the message form about page which is stored in contact_message for admin
 @app.route('/admin/messages', endpoint='admin_messages')
 @admin_required
 def view_contact_messages():
@@ -384,6 +387,7 @@ def view_contact_messages():
 
     return render_template('admin_messages.html', messages=messages)
 
+# rendering the data in cart from cart table
 @app.route('/cart')
 @login_required
 def cart():
@@ -411,7 +415,7 @@ def cart():
 
     return render_template('cart.html', cart=cart_items, total=total)
 
-#count the number of item in the cart and show
+#count the number of item in the cart and show by user_id logged-in
 @app.context_processor
 def cart_count():
     if 'user_id' in session:
