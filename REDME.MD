@@ -13,6 +13,8 @@ script5:- pip3 install flask_mysqldb
 
 Now create database
 
+create database flask_mvc;
+
 first excute only create table then after alter table script
 
 create database flask_mvc;

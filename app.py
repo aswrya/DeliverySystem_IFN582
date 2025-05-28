@@ -6,15 +6,18 @@ from functools import wraps
 import config
 import os
 
+#creates a new Flask application instance
 app = Flask(__name__)
+
+#secure sessions and prevent tampering, 
 app.secret_key = config.SECRET_KEY
 
-# MySQL Config
+# MySQL database Config
 app.config['MYSQL_HOST'] = config.MYSQL_HOST
 app.config['MYSQL_USER'] = config.MYSQL_USER
 app.config['MYSQL_PASSWORD'] = config.MYSQL_PASSWORD
 app.config['MYSQL_DB'] = config.MYSQL_DB
-app.config['MYSQL_PORT'] = 3307
+app.config['MYSQL_PORT'] = 3307                 #changed due to default port is taken for another proccess
 
 mysql = MySQL(app)
 
@@ -37,16 +40,18 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated
 
+#While app run it will landed here at the login page.
 @app.route('/')
 def index():
     return redirect(url_for('login'))
 
+#logic for the login validations
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-        cur = mysql.connection.cursor()
+        email = request.form['email']       #email input given by the user
+        password = request.form['password'] #password input given by the user
+        cur = mysql.connection.cursor()     #db connection stablist
         cur.execute("SELECT * FROM users WHERE email=%s", (email,))
         user = cur.fetchone()
         cur.close()
@@ -56,11 +61,12 @@ def login():
             session['username'] = user[1]
             session['role'] = user[4]
             flash('Login successful', 'success')
-            return redirect(url_for('dashboard' if user[4] == 'admin' else 'dashboard'))
+            return redirect(url_for('dashboard' if user[4] == 'admin' else 'dashboard')) #if creditential is matched then user will login as the roll admin or user
         else:
             flash('Invalid credentials', 'danger')
     return render_template('login.html')
 
+# Admin signup logic
 @app.route('/admin_signup', methods=['GET', 'POST'])
 def admin_signup():
     if request.method == 'POST':
@@ -87,6 +93,7 @@ def admin_signup():
         return redirect(url_for('login'))
     return render_template('admin_signup.html')
 
+#user signup logic
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -94,7 +101,7 @@ def signup():
         email = request.form.get('email')
         password = request.form.get('password')
         repeat_password = request.form.get('repeat_password')
-        hashed_pw = generate_password_hash(password, method='pbkdf2:sha256')
+        hashed_pw = generate_password_hash(password, method='pbkdf2:sha256') # hashing algorithm
 
         cur = mysql.connection.cursor()
         cur.execute("SELECT * FROM users WHERE email=%s", (email,))
@@ -125,12 +132,13 @@ def forgot_password():
         if user:
             session['reset_email'] = email  # store temporarily in session
             flash('Email found. Please set your new password.', 'info')
-            return redirect(url_for('reset_password'))
+            return redirect(url_for('reset_password')) #then this will redirect user to the reset_password
         else:
             flash('Email not found.', 'danger')
 
     return render_template('forgot_password.html')
 
+# reset password
 @app.route('/reset_password', methods=['GET', 'POST'])
 def reset_password():
     if 'reset_email' not in session:
@@ -167,12 +175,14 @@ def dashboard():
 def admin_dashboard():
     return render_template('admin_dashboard.html', name=session.get('username'))
 
+# Logout logic with destroying all the session.
 @app.route('/logout')
 def logout():
     session.clear()
     flash("Logged out", "info")
     return redirect(url_for('login'))
 
+# Rendering data 
 @app.route('/food')
 def food():
     user_role = session.get('role')
@@ -401,6 +411,7 @@ def cart():
 
     return render_template('cart.html', cart=cart_items, total=total)
 
+#count the number of item in the cart and show
 @app.context_processor
 def cart_count():
     if 'user_id' in session:
@@ -416,10 +427,11 @@ def cart_count():
 
     return dict(cart_item_count=count)
 
+#adding food items to the cart
 @app.route('/add_to_cart', methods=['POST'])
 @login_required
 def add_to_cart():
-    user_id = session['user_id']
+    user_id = session['user_id'] #user_id comes from session
     item_id = request.form['item_id']
     item_name = request.form['item_name']
     item_price = float(request.form['item_price'])
@@ -435,7 +447,7 @@ def add_to_cart():
         # Update quantity
         cart_id = existing_item[0]
         current_qty = existing_item[1]
-        cur.execute("UPDATE cart SET quantity = %s WHERE id = %s", (current_qty + 1, cart_id))
+        cur.execute("UPDATE cart SET quantity = %s WHERE id = %s", (current_qty + 1, cart_id)) #update on quantity if already exist
     else:
         # Insert new item
         cur.execute("""
@@ -449,18 +461,20 @@ def add_to_cart():
     flash('Item added to cart', 'success')
     return redirect(url_for('food'))
 
+#removing the items from cart
 @app.route('/remove_item/<int:item_id>', methods=['POST'])
 @login_required
 def remove_item(item_id):
     user_id = session['user_id']
     cur = mysql.connection.cursor()
-    cur.execute("DELETE FROM cart WHERE user_id = %s AND id = %s", (user_id, item_id))
+    cur.execute("DELETE FROM cart WHERE user_id = %s AND id = %s", (user_id, item_id)) # item will be removed by checking user_id and item_id
     mysql.connection.commit()
     cur.close()
 
     flash('Item removed from cart', 'success')
     return redirect(url_for('cart'))
 
+#if user dont want to order and clear all the cart items
 @app.route('/clear_cart', methods=['POST'])
 @login_required
 def clear_cart():
@@ -473,6 +487,7 @@ def clear_cart():
     flash('All items removed from cart', 'success')
     return redirect(url_for('cart'))
 
+#order checkout by the user
 @app.route('/checkout', methods=['POST'])
 @login_required
 def checkout():
@@ -514,7 +529,7 @@ def checkout():
             VALUES (%s, %s, %s, %s, %s)
         """, (order_id, item[0], item[1], item[2], item[3]))
 
-    # Clear cart
+    # after placing the order, cart table will be empety and ready for the new order
     cur.execute("DELETE FROM cart WHERE user_id = %s", (user_id,))
     mysql.connection.commit()
     cur.close()
@@ -522,13 +537,14 @@ def checkout():
     flash("Order placed successfully!", "success")
     return redirect(url_for('cart'))
 
+#if user want to see the history of order placed by them
 @app.route('/order_history')
 @login_required
 def order_history():
     user_id = session.get('user_id')
     cur = mysql.connection.cursor()
 
-    # Get all orders by the user
+    # Get all orders by the user with userID
     cur.execute("SELECT * FROM orders WHERE user_id = %s ORDER BY created_at DESC", (user_id,))
     orders = cur.fetchall()
 
@@ -549,6 +565,7 @@ def order_history():
     cur.close()
     return render_template('order_history.html', order_details=order_details)
 
+# if admin want to see sales or all the sale items with user
 @app.route('/admin/orders')
 @admin_required
 def view_all_orders():
@@ -582,6 +599,6 @@ def view_all_orders():
     return render_template('admin_orders.html', all_order_details=all_order_details)
 
 
-
+#Flask web application server
 if __name__ == '__main__':
     app.run(debug=True)
