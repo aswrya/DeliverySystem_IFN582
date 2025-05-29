@@ -21,7 +21,7 @@ app.config['MYSQL_PORT'] = 3307                 #changed due to default port is 
 
 mysql = MySQL(app)
 
-# Decorators
+# Decorators define to diffrenciate login Fucnction usage
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -39,6 +39,20 @@ def admin_required(f):
             return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated
+
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('error.html',
+                           error_code=404,
+                           error_name='Page Not Found',
+                           error_message='The page you are looking for does not exist.'), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    return render_template('error.html',
+                           error_code=500,
+                           error_name='Internal Server Error',
+                           error_message='Something went wrong on our end. Please try again later.'), 500
 
 #While app run it will landed here at the login page.
 @app.route('/')
