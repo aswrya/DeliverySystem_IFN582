@@ -45,7 +45,7 @@ def not_found_error(error):
     return render_template('error.html',
                            error_code=404,
                            error_name='Page Not Found',
-                           error_message='The page you are looking for does not exist.'), 404
+                           error_message='The page does not exist.'), 404
 
 @app.errorhandler(500)
 def internal_error(error):
