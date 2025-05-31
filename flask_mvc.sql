@@ -96,3 +96,14 @@ INSERT INTO food_items (id, name, price, image_url, shop_id) VALUES
 (13,'Donuts',4.00,'images/donuts.png',4),
 (14,'Sandwich',3.00,'images/toastbread.png',4),
 (15,'Rolls',12.00,'images/wrap.png',4);
+
+-- sample data for users
+
+INSERT INTO users (id, name, email, password, role) VALUES
+(1,'Aiswarya Shrestha','aswrya@gmail.com','pbkdf2:sha256:1000000$yZkwsjw3ec81TsFD$fc280fae203a02c621aa27a3d5113e4372399bea3e4715f255d3340484b4d1e7','admin'),
+(2,'Samir Karki','samir@gmail.com','pbkdf2:sha256:1000000$wdPRF8yIn6FibkVl$338ec665adee935141b39e89ec32820310402f9e6fad482c8d2b0e49f8f85a83','user'),
+(3,'jennifer ngo','jennifer@gmail.com','pbkdf2:sha256:1000000$YaCOBBhgvl9pc7OU$109ef41cb79429823091c3bbc04d7a2b29b9fde45d219e73422d8b040857240d','user'),
+(4,'akintunde adesunyan','akintunde@gmail.com','pbkdf2:sha256:1000000$5i9ukVGOlbGbDzRq$4fadc4bb74de822d8a2e2e3d4542be530961002b1f89ab9cf71b2e3c8e822e45','admin');
+
+
+
