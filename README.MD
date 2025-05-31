@@ -52,12 +52,12 @@
         python3 app.py
 
 ##  credentials for the user and admin login which is alread insert by the sample data
-##      email and password for admin
+          email and password for admin
 
             Email: aswrya@gmail.com
             password: newone123
 
-##      email and password for user
+          email and password for user
 
             Email: samir@gmail.com
             password: samir@123
